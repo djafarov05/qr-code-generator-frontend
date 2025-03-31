@@ -194,13 +194,13 @@ import { Save } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../store/userStore';
 import { toast } from 'react-toastify';
+import { Helmet } from 'react-helmet';
 
 const Settings = () => {
   const user = useUserStore((state) => state.user);
   const logout = useUserStore((state) => state.logout);
   const navigate = useNavigate();
 
-  // 🟣 локальные состояния для формы, заполняем из стора при загрузке
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
 
@@ -213,8 +213,7 @@ const Settings = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success('Пока только форма, но данные изменены локально!');
-    // TODO: В будущем - сохранить данные в БД
+    toast.success('Settings updated locally!');
   };
 
   const handleLogout = () => {
@@ -224,69 +223,74 @@ const Settings = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Settings</h1>
-      
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold mb-4">Profile Settings</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-              Name
-            </label>
-            <input
-              id="name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-            />
-          </div>
+    <>
+      <Helmet>
+        <title>Settings - QR Generator</title>
+        <meta name="description" content="Update your user profile, manage default QR code settings, and more." />
+      </Helmet>
 
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
-            />
-          </div>
+      <div className="max-w-2xl mx-auto">
+        <h1 className="text-2xl font-bold mb-6">Settings</h1>
+        
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Profile Settings</h2>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                Name
+              </label>
+              <input
+                id="name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+              />
+            </div>
 
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+            >
+              <Save className="h-5 w-5" />
+              <span>Save Changes</span>
+            </button>
+          </form>
+        </div>
+
+        <div className="bg-white p-6 rounded-lg shadow-md mt-6">
+          <h2 className="text-xl font-semibold text-red-600 mb-4">Account deletion</h2>
           <button
-            type="submit"
-            className="flex items-center space-x-2 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+            className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
           >
-            <Save className="h-5 w-5" />
-            <span>Save Changes</span>
+            Delete Account
           </button>
-        </form>
-      </div>
+        </div>
 
-      <div className="bg-white p-6 rounded-lg shadow-md mt-6">
-        <h2 className="text-xl font-semibold text-red-600 mb-4">Account deletion</h2>
-        <button
-          className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
-        >
-          Delete Account
-        </button>
+        <div className="bg-white p-6 rounded-lg shadow-md mt-6">
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">Logout</h2>
+          <button
+            onClick={handleLogout}
+            className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700"
+          >
+            Logout
+          </button>
+        </div>
       </div>
-
-      {/* === LOGOUT === */}
-      <div className="bg-white p-6 rounded-lg shadow-md mt-6">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Logout</h2>
-        <button
-          onClick={handleLogout}
-          className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700"
-        >
-          Logout
-        </button>
-      </div>
-
-    </div>
+    </>
   );
 };
 
