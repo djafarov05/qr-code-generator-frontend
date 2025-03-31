@@ -76,7 +76,7 @@ const Home = () => {
         <section className="bg-white p-8 rounded-lg shadow-md">
           <div className="flex flex-col items-center space-y-6">
             <img
-              src="/assets/logo.png"
+              src="/logo.png"
               alt="My brand logo"
               className="w-48 h-auto"
             />
