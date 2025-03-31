@@ -14,9 +14,9 @@ interface QRCode {
   size: number;
 }
 
-// Database API functions for QR code CRUD operations
+
 export const databaseApi = {
-  // Create new QR code
+
   createQRCode: async (qrCode: QRCode) => {
     const { data, error } = await supabase
       .from('qr_codes')
@@ -28,7 +28,7 @@ export const databaseApi = {
     return data;
   },
 
-  // Get user's QR codes
+  
   getQRCodes: async () => {
     const { data, error } = await supabase
       .from('qr_codes')
@@ -39,7 +39,7 @@ export const databaseApi = {
     return data;
   },
 
-  // Update QR code
+
   updateQRCode: async (id: string, updates: Partial<QRCode>) => {
     const { data, error } = await supabase
       .from('qr_codes')
@@ -52,7 +52,6 @@ export const databaseApi = {
     return data;
   },
 
-  // Delete QR code
   deleteQRCode: async (id: string) => {
     const { error } = await supabase
       .from('qr_codes')
@@ -63,7 +62,3 @@ export const databaseApi = {
   }
 };
 
-// import { createClient } from '@supabase/supabase-js'
-// const supabaseUrl = 'https://hnzvkmbtrzucrvprbskm.supabase.co'
-// const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY as string;
-// const supabase = createClient(supabaseUrl, supabaseKey)

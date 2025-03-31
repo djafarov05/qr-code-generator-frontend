@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react';
 import { Link } from 'react-router-dom';
 import { QrCode, History } from 'lucide-react';
 import { Helmet } from 'react-helmet';

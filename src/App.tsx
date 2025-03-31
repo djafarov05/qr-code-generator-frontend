@@ -35,7 +35,7 @@
 
 // export default App;
 
-import React from 'react';
+// import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -57,10 +57,10 @@ function App() {
     <Router>
       <div className="min-h-screen bg-gray-50 flex flex-col">
 
-        {/* Навбар */}
+        
         <Navbar />
 
-        {/* Контент */}
+        
         <main className="flex-grow container mx-auto px-4 py-8">
           <Routes>
             <Route path="/" element={<Home />} />
@@ -69,29 +69,29 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/generator" element={<Generator />} />
 
-            {/* Защищенный роут */}
+            
             <Route path="/my-codes" element={
               <ProtectedRoute>
                 <MyQRCodes />
               </ProtectedRoute>
             } />
 
-            {/* Можно и settings защитить */}
+            
             <Route path="/settings" element={
               <ProtectedRoute>
                 <Settings />
               </ProtectedRoute>
             } />
 
-            {/* Страница 404 */}
+            
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
 
-        {/* Подвал */}
+        
         <Footer />
 
-        {/* Уведомления */}
+        
         <ToastContainer position="top-right" autoClose={2000} hideProgressBar={false} />
       </div>
     </Router>

@@ -1,6 +1,6 @@
-import React from 'react';
+// import React from 'react';
 import { Github, Twitter, Mail } from 'lucide-react';
-import { useUserStore } from '../store/userStore'; // подключаем store
+import { useUserStore } from '../store/userStore'; 
 
 const Footer = () => {
   const isLoggedIn = useUserStore((state) => state.isUserLoggedIn());
@@ -25,7 +25,7 @@ const Footer = () => {
                 </a>
               </li>
 
-              {/* Показываем только если залогинен */}
+              
               {isLoggedIn && (
                 <>
                   <li>

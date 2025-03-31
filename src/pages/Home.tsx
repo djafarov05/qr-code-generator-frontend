@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { Zap, Shield, Users } from 'lucide-react';
 import { Helmet } from 'react-helmet';
@@ -71,6 +70,26 @@ const Home = () => {
               <h3 className="text-xl font-semibold mb-2">Download & Share</h3>
               <p className="text-gray-600">Get your QR code in multiple formats and share instantly.</p>
             </div>
+          </div>
+        </section>
+
+        <section className="bg-white p-8 rounded-lg shadow-md">
+          <div className="flex flex-col items-center space-y-6">
+            <img
+              src="/assets/logo.png"
+              alt="My brand logo"
+              className="w-48 h-auto"
+            />
+            <iframe
+              width="560"
+              height="315"
+              src="https://www.youtube.com/embed/kzp0o5rwS_o?autoplay=1&mute=1"
+              title="QR code scanning video"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="rounded-lg shadow-lg"
+            />
+            <p className="text-xl font-semibold">Make your life easier using our advanced web-application</p>
           </div>
         </section>
       </div>

@@ -80,7 +80,8 @@
 // };
 
 // export default Navbar;
-import React from 'react';
+
+// import React from 'react';
 import { Link } from 'react-router-dom';
 import { QrCode, Settings, User } from 'lucide-react';
 import { useUserStore } from '../store/userStore';
@@ -115,7 +116,7 @@ const Navbar = () => {
               </Link>
             )}
 
-            {/* 👇 Выводим приветствие */}
+            
             {isLoggedIn ? (
               <span className="text-sm text-gray-600">
                 Hey! {user?.name}

@@ -19,7 +19,7 @@ export const useUserStore = create<UserState>((set) => ({
 
     login: (token: string) => {
         // пока захардкодим user
-        const user = { name: "John Doe", email: "john@example.com" }; // placeholder for now
+        const user = { name: "Dzhamal", email: "djafarov@gmail.com" }; // placeholder for now
         sessionStorage.setItem('token', token);
         sessionStorage.setItem('user', JSON.stringify(user));
         set({ token, user });

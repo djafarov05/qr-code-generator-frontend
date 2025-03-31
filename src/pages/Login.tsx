@@ -91,7 +91,7 @@ const Login = () => {
     e.preventDefault();
     const fakeToken = btoa(`${email}:${password}`);
     login(fakeToken);
-    toast.success('Вы успешно вошли!');
+    toast.success('Logged in!');
     setTimeout(() => {
       navigate('/my-codes');
     }, 1500);
