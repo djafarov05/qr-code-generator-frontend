@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
 import { getTip } from '../api/staticApi';
 import { shortenUrl } from '../api/dynamicApi';
-import { databaseApi } from '../api/databaseApi';
+// import { databaseApi } from '../api/databaseApi';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 
@@ -51,12 +51,12 @@ const Generator = () => {
 
   const handleSaveQRCode = async () => {
     try {
-      await databaseApi.createQRCode({
-        content: qrValue,
-        shortened_url: shortenedUrl,
-        color: qrColor,
-        size: qrSize
-      });
+      // await databaseApi.createQRCode({
+      //   content: qrValue,
+      //   shortened_url: shortenedUrl,
+      //   color: qrColor,
+      //   size: qrSize
+      // });
       navigate('/my-codes');
     } catch (error) {
       setError('Failed to save QR code. Please try again.');
