@@ -218,7 +218,7 @@ const Settings = () => {
 
   const handleLogout = () => {
     logout();
-    toast.info('Вы вышли из аккаунта');
+    toast.info('Logged out');
     navigate('/');
   };
 

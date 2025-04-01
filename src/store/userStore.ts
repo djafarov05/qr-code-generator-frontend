@@ -18,7 +18,7 @@ export const useUserStore = create<UserState>((set) => ({
     user: sessionStorage.getItem('user') ? JSON.parse(sessionStorage.getItem('user')!) : null,
 
     login: (token: string) => {
-        // пока захардкодим user
+        
         const user = { name: "Dzhamal", email: "djafarov@gmail.com" }; // placeholder for now
         sessionStorage.setItem('token', token);
         sessionStorage.setItem('user', JSON.stringify(user));

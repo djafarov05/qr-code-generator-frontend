@@ -1,5 +1,5 @@
 // import React from 'react';
-import { Github, Twitter, Mail } from 'lucide-react';
+import { Github,  Instagram } from 'lucide-react';
 import { useUserStore } from '../store/userStore'; 
 
 const Footer = () => {
@@ -46,15 +46,13 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4">Connect</h3>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-600 hover:text-indigo-600">
+              <a href="https://github.com/djafarov05" className="text-gray-600 hover:text-indigo-600">
                 <Github className="h-6 w-6" />
               </a>
-              <a href="#" className="text-gray-600 hover:text-indigo-600">
-                <Twitter className="h-6 w-6" />
+              <a href="https://www.instagram.com/jamal_royale23/" className="text-gray-600 hover:text-indigo-600">
+                <Instagram className="h-6 w-6" />
               </a>
-              <a href="#" className="text-gray-600 hover:text-indigo-600">
-                <Mail className="h-6 w-6" />
-              </a>
+
             </div>
           </div>
         </div>

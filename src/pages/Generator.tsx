@@ -45,7 +45,7 @@ const Generator = () => {
       setQrValue(shortened);
       setIsUrlShortened(true);
     } catch (error) {
-      setError('Failed to shorten URL. Please try again.');
+      setError('Failed to shorten URL, make sure you are not trying to shorten already shortened link.');
     }
   };
 
