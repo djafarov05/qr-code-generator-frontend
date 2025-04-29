@@ -22,14 +22,25 @@ const MyQRCodes = () => {
     setEditId(null);
   };
 
-  const download = (c: typeof qrCodes[number]) => {
-    const imgURL = `https://api.qrserver.com/v1/create-qr-code/?size=${c.size}x${c.size}&data=${encodeURIComponent(
-      c.content
-    )}&color=${c.color.replace("#", "")}`;
+  const download = async (c: (typeof qrCodes)[number]) => {
+    const imgURL = `https://api.qrserver.com/v1/create-qr-code/?size=${
+      c.size
+    }x${c.size}&data=${encodeURIComponent(c.content)}&color=${c.color.replace(
+      "#",
+      ""
+    )}`;
+
+    const response = await fetch(imgURL);
+    const blob = await response.blob();
+
+    const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = imgURL;
-    a.download = "qr.png";
+    a.href = url;
+    a.download = `${c.label || "qr-code"}.png`;
+    document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
   };
 
   return (
@@ -55,7 +66,9 @@ const MyQRCodes = () => {
             <div key={c.id} className="bg-white p-4 rounded-lg shadow-md">
               <img
                 className="w-32 h-32 mx-auto mb-4"
-                src={`https://api.qrserver.com/v1/create-qr-code/?size=${c.size}x${c.size}&data=${encodeURIComponent(
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=${
+                  c.size
+                }x${c.size}&data=${encodeURIComponent(
                   c.content
                 )}&color=${c.color.replace("#", "")}`}
                 alt="qr"
