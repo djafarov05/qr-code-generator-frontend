@@ -1,0 +1,12 @@
+{
+  "qrTips": [
+    "Keep QR codes at least 2x2 cm when printing",
+    "Use high contrast colors for better scanning",
+    "Test your QR code on multiple devices",
+    "Avoid placing QR codes on curved surfaces",
+    "Include a clear call-to-action near the QR code",
+    "Don't compress or distort the QR code shape",
+    "Leave white space around the QR code",
+    "Consider using error correction for durability"
+  ]
+}
