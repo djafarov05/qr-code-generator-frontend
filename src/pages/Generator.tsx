@@ -5,6 +5,7 @@ import { shortenUrl } from "../api/dynamicApi";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { useQRStore } from "../store/qrStore";
+import { useUserStore } from "../store/userStore";
 
 const Generator = () => {
   const navigate = useNavigate();
@@ -17,22 +18,20 @@ const Generator = () => {
   const [tip, setTip] = useState("");
   const [shortenedUrl, setShortenedUrl] = useState("");
   const [isUrlShortened, setIsUrlShortened] = useState(false);
+  const isLoggedIn = useUserStore((s) => s.isLoggedIn);
 
-  /* ──────────────── tip ──────────────── */
   useEffect(() => {
     (async () => {
       setTip(await getTip());
     })();
   }, []);
 
-  /* ──────────────── reset on change ──────────────── */
   useEffect(() => {
     setError(null);
     setIsUrlShortened(false);
     setShortenedUrl("");
   }, [qrValue]);
 
-  /* ──────────────── helpers ──────────────── */
   const validateQRData = (d: string) => d.length <= 1273;
 
   const handleShortenUrl = async () => {
@@ -60,7 +59,7 @@ const Generator = () => {
         content: qrValue,
         color: qrColor,
         size: qrSize,
-        label: qrValue, // initial label
+        label: qrValue,
       });
       navigate("/my-codes");
     } catch {
@@ -68,12 +67,33 @@ const Generator = () => {
     }
   };
 
-  /* ──────────────── UI ──────────────── */
+  const downloadQRCode = () => {
+    const imgURL = `https://api.qrserver.com/v1/create-qr-code/?size=${qrSize}x${qrSize}&data=${encodeURIComponent(
+      qrValue
+    )}&color=${qrColor.replace("#", "")}`;
+
+    fetch(imgURL)
+      .then((res) => res.blob())
+      .then((blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "qr-code.png";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      });
+  };
+
   return (
     <>
       <Helmet>
         <title>Generate QR Code - QR Generator</title>
-        <meta name="description" content="Generate and customize your QR code easily." />
+        <meta
+          name="description"
+          content="Generate and customize your QR code easily."
+        />
       </Helmet>
 
       <div className="space-y-8">
@@ -86,13 +106,14 @@ const Generator = () => {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* left column */}
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-2xl font-bold mb-6">QR Settings</h2>
 
-            {/* content */}
             <div className="mb-4">
-              <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="content"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Content
               </label>
 
@@ -117,9 +138,11 @@ const Generator = () => {
               {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
             </div>
 
-            {/* color */}
             <div className="mb-4">
-              <label htmlFor="color" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="color"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Color
               </label>
               <input
@@ -131,9 +154,11 @@ const Generator = () => {
               />
             </div>
 
-            {/* size */}
             <div className="mb-6">
-              <label htmlFor="size" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="size"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Size
               </label>
               <input
@@ -149,15 +174,25 @@ const Generator = () => {
               <div className="text-sm text-gray-500 mt-1">{qrSize}px</div>
             </div>
 
-            <button
-              onClick={handleSaveQRCode}
-              className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700"
-            >
-              Save QR Code
-            </button>
+            {isLoggedIn ? (
+              <button
+                onClick={handleSaveQRCode}
+                disabled={!qrValue || !validateQRData(qrValue)}
+                className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Save QR Code
+              </button>
+            ) : (
+              <button
+                onClick={downloadQRCode}
+                disabled={!qrValue || !validateQRData(qrValue)}
+                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Download QR Code
+              </button>
+            )}
           </div>
 
-          {/* preview */}
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-2xl font-bold mb-6">Preview</h2>
             <div className="flex items-center justify-center bg-gray-50 p-4 rounded-lg">
@@ -171,10 +206,14 @@ const Generator = () => {
                     includeMargin
                   />
                 ) : (
-                  <div className="text-red-500">Content is too long for QR code generation</div>
+                  <div className="text-red-500">
+                    Content is too long for QR code generation
+                  </div>
                 )
               ) : (
-                <div className="text-gray-500">Enter content to generate QR code</div>
+                <div className="text-gray-500">
+                  Enter content to generate QR code
+                </div>
               )}
             </div>
           </div>
