@@ -15,20 +15,16 @@ const Settings = () => {
   const [name, setName]   = useState("");
   const [email, setEmail] = useState("");
 
-  /* ─────────────── load profile ─────────────── */
   useEffect(() => {
     (async () => {
       try {
         const p = await getProfile();
         setName(p.userName);
         setEmail(p.email);
-      } catch {
-        toast.error("Failed to load profile");
-      }
+      } catch {}
     })();
   }, []);
 
-  /* ─────────────── save profile ─────────────── */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -40,7 +36,6 @@ const Settings = () => {
     }
   };
 
-  /* ─────────────── delete account ─────────────── */
   const handleDelete = async () => {
     if (!confirm("Delete account permanently?")) return;
     try {
@@ -53,7 +48,6 @@ const Settings = () => {
     }
   };
 
-  /* ─────────────── logout ─────────────── */
   const handleLogout = async () => {
     try {
       await logoutUser();
@@ -65,7 +59,6 @@ const Settings = () => {
     }
   };
 
-  /* ─────────────── UI ─────────────── */
   return (
     <>
       <Helmet>
@@ -76,7 +69,6 @@ const Settings = () => {
       <div className="max-w-2xl mx-auto">
         <h1 className="text-2xl font-bold mb-6">Settings</h1>
 
-        {/* profile */}
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-xl font-semibold mb-4">Profile Settings</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -115,7 +107,6 @@ const Settings = () => {
           </form>
         </div>
 
-        {/* delete */}
         <div className="bg-white p-6 rounded-lg shadow-md mt-6">
           <h2 className="text-xl font-semibold text-red-600 mb-4">Account deletion</h2>
           <button
@@ -127,7 +118,6 @@ const Settings = () => {
           </button>
         </div>
 
-        {/* logout */}
         <div className="bg-white p-6 rounded-lg shadow-md mt-6">
           <h2 className="text-xl font-semibold mb-4">Logout</h2>
           <button

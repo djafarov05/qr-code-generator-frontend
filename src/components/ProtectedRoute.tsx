@@ -1,18 +1,34 @@
-import React from "react";
-import { Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Navigate, useLocation } from "react-router-dom";
 import { useUserStore } from "../store/userStore";
+import { getProfile } from "../api/api";
 
 interface Props {
-  children: React.ReactNode;
+  children: JSX.Element;
 }
 
-const ProtectedRoute: React.FC<Props> = ({ children }) => {
-  const isLoggedIn = useUserStore((state) => state.isLoggedIn);
+const ProtectedRoute = ({ children }: Props) => {
+  const location = useLocation();
+  const { user, login, isLoggedIn } = useUserStore();
+  const [checked, setChecked] = useState(false);
 
-  if (!isLoggedIn) {
-    return <Navigate to="/404" />;
-  }
+  useEffect(() => {
+    if (user) {
+      setChecked(true);
+      return;
+    }
+    (async () => {
+      try {
+        const u = await getProfile();
+        login(u);
+      } finally {
+        setChecked(true);
+      }
+    })();
+  }, [user, login]);
 
+  if (!checked) return null;
+  if (!isLoggedIn) return <Navigate to="/login" state={{ from: location }} replace />;
   return <>{children}</>;
 };
 

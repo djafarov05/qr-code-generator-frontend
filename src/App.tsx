@@ -1,37 +1,20 @@
-import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
-import Generator from './pages/Generator';
-import MyQRCodes from './pages/MyQRCodes';
-import Settings from './pages/Settings';
-import NotFound from './pages/NotFound';
-import ProtectedRoute from './components/ProtectedRoute';
-
-import { useUserStore } from './store/userStore';
-import { getProfile } from './api/api';
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+import Generator from "./pages/Generator";
+import MyQRCodes from "./pages/MyQRCodes";
+import Settings from "./pages/Settings";
+import NotFound from "./pages/NotFound";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
-  const login = useUserStore((s) => s.login);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const user = await getProfile();
-        login(user);
-      } catch {
-        /* гость — игнорируем */
-      }
-    })();
-  }, [login]);
-
   return (
     <Router>
       <div className="min-h-screen bg-gray-50 flex flex-col">
