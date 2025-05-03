@@ -1,11 +1,4 @@
 const API_BASE_URL = "http://localhost:5000";
-export const deleteAccount = () =>
-  fetch(`${API_BASE_URL}/api/users/delete`, {
-    method: "DELETE",
-    credentials: "include",
-  }).then((r) => {
-    if (!r.ok) throw new Error("Failed to delete account");
-  });
 
 export interface UserProfile {
   id: number;
@@ -23,6 +16,15 @@ export interface RegisterData {
   email: string;
   password: string;
 }
+
+export const deleteAccount = () =>
+  fetch(`${API_BASE_URL}/api/users/delete`, {
+    method: "DELETE",
+    credentials: "include",
+  }).then((r) => {
+    if (!r.ok) throw new Error("Failed to delete account");
+  });
+
 
 export const getProfile = async (): Promise<UserProfile> => {
   try {
@@ -131,6 +133,29 @@ export const logoutUser = async (): Promise<void> => {
     }
   } catch (error: any) {
     console.error("Error logging out:", error.message);
+    throw error;
+  }
+};
+
+export const sendQRCodeToEmail = async (payload: {
+  email: string;
+  content: string;
+  color: string;
+  size: number;
+}): Promise<void> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/email/send-qr`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to send QR code email");
+    }
+  } catch (error: any) {
+    console.error("Error sending QR code to email:", error.message);
     throw error;
   }
 };

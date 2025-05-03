@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { useQRStore } from "../store/qrStore";
 import { useUserStore } from "../store/userStore";
+import { toast } from "react-toastify";
+import { sendQRCodeToEmail } from "../api/api"; // 👈 добавь этот импорт
 
 const Generator = () => {
   const navigate = useNavigate();
@@ -14,11 +16,14 @@ const Generator = () => {
   const [qrValue, setQrValue] = useState("");
   const [qrColor, setQrColor] = useState("#000000");
   const [qrSize, setQrSize] = useState(256);
+  const [guestEmail, setGuestEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [tip, setTip] = useState("");
   const [shortenedUrl, setShortenedUrl] = useState("");
   const [isUrlShortened, setIsUrlShortened] = useState(false);
   const isLoggedIn = useUserStore((s) => s.isLoggedIn);
+  const [isSending, setIsSending] = useState(false);
+
 
   useEffect(() => {
     (async () => {
@@ -67,24 +72,28 @@ const Generator = () => {
     }
   };
 
-  const downloadQRCode = () => {
-    const imgURL = `https://api.qrserver.com/v1/create-qr-code/?size=${qrSize}x${qrSize}&data=${encodeURIComponent(
-      qrValue
-    )}&color=${qrColor.replace("#", "")}`;
-
-    fetch(imgURL)
-      .then((res) => res.blob())
-      .then((blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "qr-code.png";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
+  const handleSendToEmail = async () => {
+    if (!guestEmail) {
+      toast.error("Email is required");
+      return;
+    }
+    setIsSending(true);
+    try {
+      await sendQRCodeToEmail({
+        email: guestEmail,
+        content: qrValue,
+        color: qrColor,
+        size: qrSize,
       });
+      toast.success("QR code sent to your email!");
+      setGuestEmail("");
+    } catch {
+      toast.error("Failed to send QR code");
+    } finally {
+      setIsSending(false);
+    }
   };
+  
 
   return (
     <>
@@ -110,13 +119,9 @@ const Generator = () => {
             <h2 className="text-2xl font-bold mb-6">QR Settings</h2>
 
             <div className="mb-4">
-              <label
-                htmlFor="content"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+              <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
                 Content
               </label>
-
               <input
                 id="content"
                 type="text"
@@ -125,7 +130,6 @@ const Generator = () => {
                 placeholder="Enter URL or text"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
               />
-
               {qrValue.startsWith("http") && !isUrlShortened && (
                 <button
                   onClick={handleShortenUrl}
@@ -134,15 +138,11 @@ const Generator = () => {
                   Shorten URL
                 </button>
               )}
-
               {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
             </div>
 
             <div className="mb-4">
-              <label
-                htmlFor="color"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+              <label htmlFor="color" className="block text-sm font-medium text-gray-700 mb-1">
                 Color
               </label>
               <input
@@ -154,11 +154,8 @@ const Generator = () => {
               />
             </div>
 
-            <div className="mb-6">
-              <label
-                htmlFor="size"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+            <div className="mb-4">
+              <label htmlFor="size" className="block text-sm font-medium text-gray-700 mb-1">
                 Size
               </label>
               <input
@@ -174,6 +171,22 @@ const Generator = () => {
               <div className="text-sm text-gray-500 mt-1">{qrSize}px</div>
             </div>
 
+            {!isLoggedIn && (
+              <div className="mb-4">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                  Your Email
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  value={guestEmail}
+                  onChange={(e) => setGuestEmail(e.target.value)}
+                  placeholder="Enter your email to receive QR"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                />
+              </div>
+            )}
+
             {isLoggedIn ? (
               <button
                 onClick={handleSaveQRCode}
@@ -184,12 +197,16 @@ const Generator = () => {
               </button>
             ) : (
               <button
-                onClick={downloadQRCode}
-                disabled={!qrValue || !validateQRData(qrValue)}
-                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Download QR Code
-              </button>
+  onClick={handleSendToEmail}
+  disabled={!qrValue || !guestEmail || !validateQRData(qrValue) || isSending}
+  className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+>
+  {isSending ? (
+    <span className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full mr-2" />
+  ) : null}
+  {isSending ? "Sending..." : "Send QR to Email"}
+</button>
+
             )}
           </div>
 
@@ -206,14 +223,10 @@ const Generator = () => {
                     includeMargin
                   />
                 ) : (
-                  <div className="text-red-500">
-                    Content is too long for QR code generation
-                  </div>
+                  <div className="text-red-500">Content is too long for QR code generation</div>
                 )
               ) : (
-                <div className="text-gray-500">
-                  Enter content to generate QR code
-                </div>
+                <div className="text-gray-500">Enter content to generate QR code</div>
               )}
             </div>
           </div>
