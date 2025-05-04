@@ -24,7 +24,6 @@ const Generator = () => {
   const isLoggedIn = useUserStore((s) => s.isLoggedIn);
   const [isSending, setIsSending] = useState(false);
 
-
   useEffect(() => {
     (async () => {
       setTip(await getTip());
@@ -38,6 +37,9 @@ const Generator = () => {
   }, [qrValue]);
 
   const validateQRData = (d: string) => d.length <= 1273;
+
+  const isValidEmail = (email: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const handleShortenUrl = async () => {
     if (!qrValue.startsWith("http")) {
@@ -77,6 +79,11 @@ const Generator = () => {
       toast.error("Email is required");
       return;
     }
+    if (!isValidEmail(guestEmail)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
     setIsSending(true);
     try {
       await sendQRCodeToEmail({
@@ -87,13 +94,13 @@ const Generator = () => {
       });
       toast.success("QR code sent to your email!");
       setGuestEmail("");
+      setQrValue("");
     } catch {
       toast.error("Failed to send QR code");
     } finally {
       setIsSending(false);
     }
   };
-  
 
   return (
     <>
@@ -114,12 +121,21 @@ const Generator = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="bg-white p-6 rounded-lg shadow-md">
+        <div
+          className={`grid gap-8 ${
+            isLoggedIn
+              ? "grid-cols-1 md:grid-cols-2"
+              : "grid-cols-1 place-items-center"
+          }`}
+        >
+          <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-xl">
             <h2 className="text-2xl font-bold mb-6">QR Settings</h2>
 
             <div className="mb-4">
-              <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="content"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Content
               </label>
               <input
@@ -142,7 +158,10 @@ const Generator = () => {
             </div>
 
             <div className="mb-4">
-              <label htmlFor="color" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="color"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Color
               </label>
               <input
@@ -155,7 +174,10 @@ const Generator = () => {
             </div>
 
             <div className="mb-4">
-              <label htmlFor="size" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="size"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Size
               </label>
               <input
@@ -173,7 +195,10 @@ const Generator = () => {
 
             {!isLoggedIn && (
               <div className="mb-4">
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
                   Your Email
                 </label>
                 <input
@@ -197,39 +222,49 @@ const Generator = () => {
               </button>
             ) : (
               <button
-  onClick={handleSendToEmail}
-  disabled={!qrValue || !guestEmail || !validateQRData(qrValue) || isSending}
-  className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
->
-  {isSending ? (
-    <span className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full mr-2" />
-  ) : null}
-  {isSending ? "Sending..." : "Send QR to Email"}
-</button>
-
+                onClick={handleSendToEmail}
+                disabled={
+                  !qrValue ||
+                  !guestEmail ||
+                  !validateQRData(qrValue) ||
+                  isSending
+                }
+                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              >
+                {isSending ? (
+                  <span className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full mr-2" />
+                ) : null}
+                {isSending ? "Sending..." : "Send QR to Email"}
+              </button>
             )}
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold mb-6">Preview</h2>
-            <div className="flex items-center justify-center bg-gray-50 p-4 rounded-lg">
-              {qrValue ? (
-                validateQRData(qrValue) ? (
-                  <QRCodeCanvas
-                    value={qrValue}
-                    size={qrSize}
-                    fgColor={qrColor}
-                    level="H"
-                    includeMargin
-                  />
+          {isLoggedIn && (
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <h2 className="text-2xl font-bold mb-6">Preview</h2>
+              <div className="flex items-center justify-center bg-gray-50 p-4 rounded-lg">
+                {qrValue ? (
+                  validateQRData(qrValue) ? (
+                    <QRCodeCanvas
+                      value={qrValue}
+                      size={qrSize}
+                      fgColor={qrColor}
+                      level="H"
+                      includeMargin
+                    />
+                  ) : (
+                    <div className="text-red-500">
+                      Content is too long for QR code generation
+                    </div>
+                  )
                 ) : (
-                  <div className="text-red-500">Content is too long for QR code generation</div>
-                )
-              ) : (
-                <div className="text-gray-500">Enter content to generate QR code</div>
-              )}
+                  <div className="text-gray-500">
+                    Enter content to generate QR code
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </>
